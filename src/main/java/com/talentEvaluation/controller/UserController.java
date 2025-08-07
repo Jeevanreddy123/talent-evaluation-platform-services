@@ -1,0 +1,40 @@
+
+package com.talentEvaluation.controller;
+
+import com.talentEvaluation.dto.UserDto;
+import com.talentEvaluation.dto.UserResponse;
+import com.talentEvaluation.entity.User;
+import com.talentEvaluation.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@CrossOrigin
+@RequestMapping("/api/user")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/register")
+    public ResponseEntity<User> registerUser(@RequestBody User user) {
+        return ResponseEntity.ok(userService.createUser(user));
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<UserResponse> getUser(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUser(username));
+    }
+
+    @DeleteMapping("/{associateId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long associateId) {
+        userService.deleteUser(associateId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<User> updateUser(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userService.updateUser(userDto));
+    }
+}
