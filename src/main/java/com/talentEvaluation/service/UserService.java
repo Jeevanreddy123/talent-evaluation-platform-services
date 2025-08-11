@@ -10,6 +10,7 @@ import java.util.List;
 public interface UserService {
     User createUser(User user);
     UserResponse getUser(String username);
+    UserResponse getUserById(Long associateId);
     User updateUser(UserUpdateDto userUpdateDto);
     void deleteUser(Long associateId);
     List<User> getAllEvaluatorsGroupByStatus();
