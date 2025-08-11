@@ -1,7 +1,7 @@
 
 package com.talentEvaluation.service;
 
-import com.talentEvaluation.dto.UserDto;
+import com.talentEvaluation.dto.UserUpdateDto;
 import com.talentEvaluation.dto.UserResponse;
 import com.talentEvaluation.exception.UserAlreadyExistsException;
 import com.talentEvaluation.entity.User;
@@ -53,14 +53,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User updateUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.getAssociateId()).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setRole(userDto.getRole());
-        user.setTechStack(userDto.getTechStack());
-        user.setProjectRole(userDto.getProjectRole());
-        user.setUpdatedBy(userDto.getUpdatedBy());
+    public User updateUser(UserUpdateDto userUpdateDto) {
+        User user = userRepository.findById(userUpdateDto.getAssociateId()).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setRole(userUpdateDto.getRole());
+        user.setTechStack(userUpdateDto.getTechStack());
+        user.setProjectRole(userUpdateDto.getProjectRole());
+        user.setUpdatedBy(userUpdateDto.getUpdatedBy());
         return userRepository.save(user);
     }
 
