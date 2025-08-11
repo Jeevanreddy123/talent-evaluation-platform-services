@@ -40,16 +40,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserResponse getUser(String username) {
         User user = userRepository.findByUsername(username);
-        UserResponse userResponse = new UserResponse();
-        userResponse.setAssociateId(user.getAssociateId());
-        userResponse.setUsername(user.getUsername());
-        userResponse.setFirstName(user.getFirstName());
-        userResponse.setLastName(user.getLastName());
-        userResponse.setRole(user.getRole());
-        userResponse.setTechStack(user.getTechStack());
-        userResponse.setProjectRole(user.getProjectRole());
-        userResponse.setUpdatedBy(user.getUpdatedBy());
-        return userResponse;
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        return mapToUserResponse(user);
+    }
+
+    @Override
+    public UserResponse getUserById(Long associateId) {
+        User user = userRepository.findById(associateId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + associateId));
+        return mapToUserResponse(user);
     }
 
     @Override
@@ -81,5 +82,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // The User entity already implements UserDetails, so we can return it directly.
         // The getAuthorities() method in the User entity will provide the roles.
         return user;
+    }
+
+    private UserResponse mapToUserResponse(User user) {
+        UserResponse userResponse = new UserResponse();
+        userResponse.setAssociateId(user.getAssociateId());
+        userResponse.setUsername(user.getUsername());
+        userResponse.setFirstName(user.getFirstName());
+        userResponse.setLastName(user.getLastName());
+        userResponse.setRole(user.getRole());
+        userResponse.setTechStack(user.getTechStack());
+        userResponse.setProjectRole(user.getProjectRole());
+        userResponse.setUpdatedBy(user.getUpdatedBy());
+        return userResponse;
     }
 }

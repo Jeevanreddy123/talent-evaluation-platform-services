@@ -5,8 +5,13 @@ import lombok.Data;
 
 @Data
 public class EvaluationDto {
-    private String candidateName;
-    private String skill;
+    private Long candidateId;
+    private String candidateStack;
+    private String firstName;
+    private String lastName;
+    private String soId;
+    private String soRole;
     private String evaluationDate;
+    private String status;
     private Long evaluatorId;
 }

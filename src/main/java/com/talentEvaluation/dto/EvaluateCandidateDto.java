@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class EvaluateCandidateDto {
     private Long candidateId;
-    private Integer score;
-    private String notes;
+    private String evaluationDetails;
+    private String evaluationFeedback;
+    private String status;
 }
