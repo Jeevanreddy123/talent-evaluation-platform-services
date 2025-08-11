@@ -1,8 +1,8 @@
 
 package com.talentEvaluation.controller;
 
-import com.talentEvaluation.dto.UserDto;
 import com.talentEvaluation.dto.UserResponse;
+import com.talentEvaluation.dto.UserUpdateDto;
 import com.talentEvaluation.entity.User;
 import com.talentEvaluation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> updateUser(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.updateUser(userDto));
+    public ResponseEntity<User> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+        return ResponseEntity.ok(userService.updateUser(userUpdateDto));
     }
 }
