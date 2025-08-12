@@ -12,6 +12,8 @@ import com.talentEvaluation.entity.Evaluation;
 import com.talentEvaluation.entity.User;
 import com.talentEvaluation.repository.EvaluationRepository;
 import com.talentEvaluation.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +29,8 @@ import java.util.List;
 @Service
 public class EvaluationServiceImpl implements EvaluationService {
 
+    private static final Logger logger = LoggerFactory.getLogger(EvaluationServiceImpl.class);
+
     @Autowired
     private EvaluationRepository evaluationRepository;
 
@@ -35,11 +39,14 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     public Evaluation addEvaluation(EvaluationDto evaluationDto) {
+        logger.info("Attempting to add evaluation for candidate ID: {}", evaluationDto.getCandidateId());
         if (evaluationRepository.existsById(evaluationDto.getCandidateId())) {
+            logger.warn("Attempted to add an evaluation for an already existing candidate ID: {}", evaluationDto.getCandidateId());
             throw new CandidateAlreadyAssignedException("Candidate is already assigned to an Evaluator");
         }
 
         User evaluator = userRepository.findById(evaluationDto.getEvaluatorId())
+                // Consider creating a specific UserNotFoundException
                 .orElseThrow(() -> new RuntimeException("Evaluator not found with id: " + evaluationDto.getEvaluatorId()));
 
         Evaluation evaluation = new Evaluation();
@@ -53,16 +60,21 @@ public class EvaluationServiceImpl implements EvaluationService {
             try {
                 evaluation.setStatus(EvaluationStatus.valueOf(evaluationDto.getStatus().toUpperCase()));
             } catch (IllegalArgumentException e) {
-                throw new RuntimeException("Invalid status value provided: '" + evaluationDto.getStatus() + "'. Must be one of " + java.util.Arrays.toString(EvaluationStatus.values()));
+                logger.error("Invalid status value provided: '{}'", evaluationDto.getStatus(), e);
+                throw new IllegalArgumentException("Invalid status value provided: '" + evaluationDto.getStatus() + "'. Must be one of " + java.util.Arrays.toString(EvaluationStatus.values()));
             }
         }
         try {
             evaluation.setEvaluationDate(new SimpleDateFormat("yyyy-MM-dd").parse(evaluationDto.getEvaluationDate()));
         } catch (ParseException e) {
+            logger.error("Invalid date format for evaluationDate: '{}'. Expected yyyy-MM-dd.", evaluationDto.getEvaluationDate(), e);
+            // Consider creating a specific InvalidDateFormatException
             throw new RuntimeException("Invalid date format for evaluationDate. Expected yyyy-MM-dd.", e);
         }
         evaluation.setEvaluator(evaluator);
-        return evaluationRepository.save(evaluation);
+        Evaluation savedEvaluation = evaluationRepository.save(evaluation);
+        logger.info("Successfully added evaluation for candidate: {} {}", savedEvaluation.getFirstName(), savedEvaluation.getLastName());
+        return savedEvaluation;
     }
 
     @Override
@@ -113,10 +125,13 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     public GroupedEvaluationsResponse getGroupedEvaluations(int page, int size) {
+        logger.info("Fetching grouped evaluations for page: {} and size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Evaluation> pendingPage = evaluationRepository.findByStatus(EvaluationStatus.PENDING, pageable);
         Page<Evaluation> completedPage = evaluationRepository.findByStatus(EvaluationStatus.COMPLETED, pageable);
+
+        logger.info("Found {} pending and {} completed evaluations for page {}.", pendingPage.getNumberOfElements(), completedPage.getNumberOfElements(), page);
 
         EvaluationPage pendingEvaluations = new EvaluationPage(pendingPage);
         EvaluationPage completedEvaluations = new EvaluationPage(completedPage);
