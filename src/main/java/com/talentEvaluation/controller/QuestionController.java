@@ -1,6 +1,7 @@
 
 package com.talentEvaluation.controller;
 
+import com.talentEvaluation.enums.DifficultyLevel;
 import com.talentEvaluation.entity.Question;
 import com.talentEvaluation.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,13 @@ public class QuestionController {
 
     @GetMapping("/level/{level}/technology/{technology}")
     public ResponseEntity<List<Question>> getQuestions(@PathVariable String level, @PathVariable String technology) {
-        return ResponseEntity.ok(questionService.getQuestionsByLevelAndTechnology(level, technology));
+        try {
+            DifficultyLevel levelEnum = DifficultyLevel.valueOf(level.toUpperCase());
+            List<Question> questions = questionService.getQuestionsByLevelAndTechnology(levelEnum, technology);
+            return ResponseEntity.ok(questions);
+        } catch (IllegalArgumentException e) {
+            // Returns a 400 Bad Request if the level string is not a valid enum constant
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
