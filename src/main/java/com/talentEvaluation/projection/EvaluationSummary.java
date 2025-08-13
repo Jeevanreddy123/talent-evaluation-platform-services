@@ -1,6 +1,5 @@
 package com.talentEvaluation.projection;
 
-import com.talentEvaluation.entity.User;
 import com.talentEvaluation.enums.EvaluationStatus;
 
 import java.util.Date;
@@ -19,5 +18,5 @@ public interface EvaluationSummary {
     EvaluationStatus getStatus();
     String getEvaluationDetails();
     String getEvaluationFeedback();
-    User getEvaluator();
+    UserSummary getEvaluator();
 }

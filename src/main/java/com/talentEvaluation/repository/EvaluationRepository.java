@@ -12,6 +12,7 @@ import java.util.List;
 
 @Repository
 public interface EvaluationRepository extends JpaRepository<Evaluation, Long> {
-    List<Evaluation> findByEvaluatorAssociateId(Long associateId);
+    List<EvaluationSummary> findByEvaluatorAssociateId(Long associateId);
     Page<EvaluationSummary> findByStatus(EvaluationStatus status, Pageable pageable);
+    List<EvaluationSummary> findAllBy();
 }
