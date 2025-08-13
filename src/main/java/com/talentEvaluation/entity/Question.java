@@ -1,6 +1,7 @@
 
 package com.talentEvaluation.entity;
 
+import com.talentEvaluation.enums.DifficultyLevel;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,6 +14,8 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String questionText;
-    private String difficultyLevel;
+    @Enumerated(EnumType.STRING)
+    private DifficultyLevel difficultyLevel;
     private String technology;
+    private String answer;
 }
