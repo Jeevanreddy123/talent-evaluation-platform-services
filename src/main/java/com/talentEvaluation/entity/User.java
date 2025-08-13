@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @PrePersist
     public void prePersist() {
         if (role == null || role.trim().isEmpty()) {
-            this.role = "user";
+            this.role = "Evaluator";
         }
     }
 

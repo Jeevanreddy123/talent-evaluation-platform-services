@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -99,7 +100,9 @@ public class EvaluationServiceImpl implements EvaluationService {
         }
     }
 
+    
     @Override
+    @Transactional(readOnly = true)
     public ResumeResponse downloadResume(Long candidateId) {
         Evaluation evaluation = evaluationRepository.findById(candidateId).orElseThrow(() -> new RuntimeException("Evaluation not found"));
         if (evaluation.getResumeFile() == null) {

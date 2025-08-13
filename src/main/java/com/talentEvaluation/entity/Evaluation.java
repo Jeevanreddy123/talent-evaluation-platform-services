@@ -37,6 +37,7 @@ public class Evaluation {
     private EvaluationStatus status;
     @Column(name = "resume_file")
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     @JsonIgnore
     private byte[] resumeFile;
     @Column(name = "resume_file_type")
