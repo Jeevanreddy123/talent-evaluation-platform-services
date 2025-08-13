@@ -49,7 +49,7 @@ public class Evaluation {
     @Basic(fetch = FetchType.LAZY)
     @JsonIgnore
     @Column(name = "resume_file")
-    @JdbcTypeCode(SqlTypes.BLOB)
+    @JdbcTypeCode(SqlTypes.BINARY)
     private byte[] resumeFile;
 
     @Column(name = "resume_file_type")

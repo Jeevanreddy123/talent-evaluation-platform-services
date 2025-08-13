@@ -1,13 +1,12 @@
 package com.talentEvaluation.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 public class GroupedEvaluationsResponse {
-    private EvaluationPage pending;
-    private EvaluationPage completed;
+    private final EvaluationPage<?> pending;
+    private final EvaluationPage<?> completed;
 }
+

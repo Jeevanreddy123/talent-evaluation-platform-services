@@ -23,7 +23,7 @@ public class ExcelFile {
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JdbcTypeCode(SqlTypes.BLOB)
+    @JdbcTypeCode(SqlTypes.BINARY)
     private byte[] file;
     private String technology;
     private String uploadedBy;

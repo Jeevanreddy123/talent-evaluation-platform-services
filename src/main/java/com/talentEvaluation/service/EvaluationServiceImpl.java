@@ -7,6 +7,7 @@ import com.talentEvaluation.dto.EvaluationDto;
 import com.talentEvaluation.dto.ResumeResponse;
 import com.talentEvaluation.dto.EvaluateCandidateDto;
 import com.talentEvaluation.enums.EvaluationStatus;
+import com.talentEvaluation.projection.EvaluationSummary;
 import com.talentEvaluation.exception.CandidateAlreadyAssignedException;
 import com.talentEvaluation.entity.Evaluation;
 import com.talentEvaluation.entity.User;
@@ -128,13 +129,13 @@ public class EvaluationServiceImpl implements EvaluationService {
         logger.info("Fetching grouped evaluations for page: {} and size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Evaluation> pendingPage = evaluationRepository.findByStatus(EvaluationStatus.PENDING, pageable);
-        Page<Evaluation> completedPage = evaluationRepository.findByStatus(EvaluationStatus.COMPLETED, pageable);
+        Page<EvaluationSummary> pendingPage = evaluationRepository.findByStatus(EvaluationStatus.PENDING, pageable);
+        Page<EvaluationSummary> completedPage = evaluationRepository.findByStatus(EvaluationStatus.COMPLETED, pageable);
 
         logger.info("Found {} pending and {} completed evaluations for page {}.", pendingPage.getNumberOfElements(), completedPage.getNumberOfElements(), page);
 
-        EvaluationPage pendingEvaluations = new EvaluationPage(pendingPage);
-        EvaluationPage completedEvaluations = new EvaluationPage(completedPage);
+        EvaluationPage<EvaluationSummary> pendingEvaluations = new EvaluationPage<>(pendingPage);
+        EvaluationPage<EvaluationSummary> completedEvaluations = new EvaluationPage<>(completedPage);
 
         return new GroupedEvaluationsResponse(pendingEvaluations, completedEvaluations);
     }
