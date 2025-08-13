@@ -29,10 +29,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(username));
     }
 
-    // @GetMapping("/all")
-    // public ResponseEntity<List<UserResponse>> getAllUsers() {
-    //     return ResponseEntity.ok(userService.getAllUsers());
-    // }
+    @GetMapping("/all")
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
 
     // @GetMapping("/evaluators")
     // public ResponseEntity<List<UserResponse>> getEvaluators() {

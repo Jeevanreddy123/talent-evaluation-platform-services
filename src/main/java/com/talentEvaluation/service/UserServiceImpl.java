@@ -1,4 +1,3 @@
-
 package com.talentEvaluation.service;
 
 import com.talentEvaluation.dto.UserUpdateDto;
@@ -71,6 +70,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<User> getAllEvaluatorsGroupByStatus() {
         return userRepository.findAll().stream().filter(user -> "EVALUATOR".equals(user.getRole())).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::mapToUserResponse)
+                .collect(Collectors.toList());
     }
 
     @Override

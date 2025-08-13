@@ -13,5 +13,6 @@ public interface UserService {
     UserResponse getUserById(Long associateId);
     User updateUser(UserUpdateDto userUpdateDto);
     void deleteUser(Long associateId);
+    List<UserResponse> getAllUsers();
     List<User> getAllEvaluatorsGroupByStatus();
 }
