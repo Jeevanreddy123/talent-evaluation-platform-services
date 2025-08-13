@@ -4,7 +4,9 @@ import com.talentEvaluation.dto.UserUpdateDto;
 import com.talentEvaluation.dto.UserResponse;
 import com.talentEvaluation.exception.UserAlreadyExistsException;
 import com.talentEvaluation.entity.User;
+import com.talentEvaluation.repository.EvaluationRepository;
 import com.talentEvaluation.repository.UserRepository;
+import com.talentEvaluation.enums.EvaluationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +25,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EvaluationRepository evaluationRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -67,15 +72,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.deleteById(associateId);
     }
 
-    @Override
-    public List<User> getAllEvaluatorsGroupByStatus() {
-        return userRepository.findAll().stream().filter(user -> "EVALUATOR".equals(user.getRole())).collect(Collectors.toList());
-    }
+    // @Override
+    // public List<UserResponse> getAllEvaluators() {
+    //     return userRepository.findAll().stream().filter(user -> "EVALUATOR".equals(user.getRole())).collect(Collectors.toList());
+    // }
 
     @Override
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(this::mapToUserResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserResponse> getAllEvaluators() {
+        return userRepository.findAll().stream()
+                .filter(user -> "Evaluator".equalsIgnoreCase(user.getRole()))
+                .map(user -> {
+                    UserResponse userResponse = mapToUserResponse(user);
+                    long pending = evaluationRepository.countByEvaluatorAssociateIdAndStatus(user.getAssociateId(), EvaluationStatus.PENDING);
+                    long completed = evaluationRepository.countByEvaluatorAssociateIdAndStatus(user.getAssociateId(), EvaluationStatus.COMPLETED);
+                    userResponse.setPendingEvaluations((int) pending);
+                    userResponse.setCompletedEvaluations((int) completed);
+                    return userResponse;
+                })
                 .collect(Collectors.toList());
     }
 

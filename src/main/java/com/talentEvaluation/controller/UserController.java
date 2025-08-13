@@ -34,10 +34,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // @GetMapping("/evaluators")
-    // public ResponseEntity<List<UserResponse>> getEvaluators() {
-    //     return ResponseEntity.ok(userService.getAllEvaluators());
-    // }
+    @GetMapping("/evaluators")
+    public ResponseEntity<List<UserResponse>> getEvaluators() {
+        return ResponseEntity.ok(userService.getAllEvaluators());
+    }
 
     @GetMapping("/id/{associateId}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long associateId) {

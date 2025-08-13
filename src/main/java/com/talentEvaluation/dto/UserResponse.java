@@ -12,4 +12,6 @@ public class UserResponse {
     private String techStack;
     private String projectRole;
     private String updatedBy;
+    private int pendingEvaluations;
+    private int completedEvaluations;
 }

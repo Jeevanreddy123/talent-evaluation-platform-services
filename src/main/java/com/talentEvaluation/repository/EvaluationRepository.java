@@ -20,5 +20,6 @@ public interface EvaluationRepository extends JpaRepository<Evaluation, Long> {
     Page<Evaluation> findByStatusAndSearchTerm(@Param("status") EvaluationStatus status, @Param("searchTerm") String searchTerm, Pageable pageable);
 
     Page<Evaluation> findByEvaluatorAssociateIdAndStatus(Long associateId, EvaluationStatus status, Pageable pageable);
+    long countByEvaluatorAssociateIdAndStatus(Long associateId, EvaluationStatus status);
 }
 

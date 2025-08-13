@@ -41,7 +41,7 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login", "/api/user/register", "/actuator/health").permitAll()
-                        .requestMatchers("/api/user/all").hasAuthority("Admin")
+                        .requestMatchers("/api/user/evaluators").hasAuthority("Admin")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
