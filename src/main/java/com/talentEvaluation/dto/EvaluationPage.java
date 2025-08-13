@@ -1,26 +1,22 @@
 package com.talentEvaluation.dto;
 
-import com.talentEvaluation.entity.Evaluation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class EvaluationPage {
-    private List<Evaluation> evaluations;
-    private int pageNumber;
-    private int totalPages;
-    private long totalElements;
+@Getter
+public class EvaluationPage<T> {
+    private final List<T> content;
+    private final int currentPage;
+    private final int totalPages;
+    private final long totalElements;
 
-    public EvaluationPage(Page<Evaluation> page) {
-        this.evaluations = page.getContent();
-        this.pageNumber = page.getNumber();
+    public EvaluationPage(Page<T> page) {
+        this.content = page.getContent();
+        this.currentPage = page.getNumber();
         this.totalPages = page.getTotalPages();
         this.totalElements = page.getTotalElements();
     }
 }
+
