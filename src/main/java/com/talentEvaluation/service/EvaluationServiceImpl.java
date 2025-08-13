@@ -8,6 +8,7 @@ import com.talentEvaluation.dto.ResumeResponse;
 import com.talentEvaluation.dto.EvaluateCandidateDto;
 import com.talentEvaluation.enums.EvaluationStatus;
 import com.talentEvaluation.projection.EvaluationSummary;
+import com.talentEvaluation.exception.ResourceNotFoundException;
 import com.talentEvaluation.exception.CandidateAlreadyAssignedException;
 import com.talentEvaluation.entity.Evaluation;
 import com.talentEvaluation.entity.User;
@@ -47,8 +48,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         }
 
         User evaluator = userRepository.findById(evaluationDto.getEvaluatorId())
-                // Consider creating a specific UserNotFoundException
-                .orElseThrow(() -> new RuntimeException("Evaluator not found with id: " + evaluationDto.getEvaluatorId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Evaluator not found with id: " + evaluationDto.getEvaluatorId()));
 
         Evaluation evaluation = new Evaluation();
         evaluation.setCandidateId(evaluationDto.getCandidateId());
@@ -79,19 +79,20 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
     @Override
-    public List<Evaluation> getAllCandidates() {
-        return evaluationRepository.findAll();
+    public List<EvaluationSummary> getAllCandidates() {
+        return evaluationRepository.findAllBy();
     }
 
     @Override
-    public List<Evaluation> getCandidatesForEvaluator(Long associateId) {
+    public List<EvaluationSummary> getCandidatesForEvaluator(Long associateId) {
         return evaluationRepository.findByEvaluatorAssociateId(associateId);
     }
 
     @Override
     public Evaluation uploadResume(MultipartFile file, Long candidateId) {
         try {
-            Evaluation evaluation = evaluationRepository.findById(candidateId).orElseThrow(() -> new RuntimeException("Evaluation not found"));
+            Evaluation evaluation = evaluationRepository.findById(candidateId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Evaluation not found with candidateId: " + candidateId));
             evaluation.setResumeFile(file.getBytes());
             evaluation.setResumeFileType(file.getContentType());
             return evaluationRepository.save(evaluation);
@@ -102,16 +103,18 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     public ResumeResponse downloadResume(Long candidateId) {
-        Evaluation evaluation = evaluationRepository.findById(candidateId).orElseThrow(() -> new RuntimeException("Evaluation not found"));
+        Evaluation evaluation = evaluationRepository.findById(candidateId)
+                .orElseThrow(() -> new ResourceNotFoundException("Evaluation not found with candidateId: " + candidateId));
         if (evaluation.getResumeFile() == null) {
-            throw new RuntimeException("Resume not found for candidate: " + candidateId);
+            throw new ResourceNotFoundException("Resume not found for candidate: " + candidateId);
         }
         return new ResumeResponse(evaluation.getResumeFile(), evaluation.getResumeFileType());
     }
 
     @Override
     public Evaluation updateEvaluation(EvaluateCandidateDto dto) {
-        Evaluation evaluation = evaluationRepository.findById(dto.getCandidateId()).orElseThrow(() -> new RuntimeException("Evaluation not found"));
+        Evaluation evaluation = evaluationRepository.findById(dto.getCandidateId())
+                .orElseThrow(() -> new ResourceNotFoundException("Evaluation not found with candidateId: " + dto.getCandidateId()));
         evaluation.setEvaluationDetails(dto.getEvaluationDetails());
         evaluation.setEvaluationFeedback(dto.getEvaluationFeedback());
         if (dto.getStatus() != null && !dto.getStatus().trim().isEmpty()) {
